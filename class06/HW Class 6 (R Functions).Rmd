@@ -1,0 +1,28 @@
+library(bio3d)
+
+# Function to analyze and plot B-factors of protein structures
+analyzeProteins <- function(pdb_files, chain = "A", elety = "CA") {
+  b_factors <- list()
+  protein_plots <- list()
+
+  # Loop through each protein file
+  for (i in seq_along(pdb_files)) {
+    pdb_data <- read.pdb(pdb_files[i])
+    trimmed_pdb <- trim.pdb(pdb_data, chain = chain, elety = elety)
+    b_factors[[i]] <- trimmed_pdb$atom$b
+    
+    # Store the plot for each protein
+    protein_plots[[i]] <- plotb3(b_factors[[i]], sse = trimmed_pdb, typ = "l", ylab = "Bfactor", main = paste("Protein", i))
+  }
+
+  # Return a list containing B-factors and plots
+  return(list(Bfactors = b_factors, Plots = protein_plots))
+}
+
+# Example usage of the function
+pdb_files <- c("4AKE.pdb", "1AKE.pdb", "1E4Y.pdb")
+results <- analyzeProteins(pdb_files)
+
+# Access B-factors and Plots
+b_factors <- results$Bfactors
+plots <- results$Plots
